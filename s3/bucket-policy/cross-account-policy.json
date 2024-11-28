@@ -1,0 +1,12 @@
+{
+    "Version": "2012-10-17",
+    "Id": "Cross-account-policy",
+    "Statement": [
+        {
+            "Principal":{"AWS": "arn:aws:iam::537124946743:user/muhammed"},
+            "Resource":["arn:aws:s3:::cross-account-bucket-policy-12134324","arn:aws:s3:::cross-account-bucket-policy-12134324/*"], 
+            "Effect": "Allow",
+            "Action": ["s3:GetObject","s3:ListBucket","s3:PutObject"]
+        }
+    ]
+}

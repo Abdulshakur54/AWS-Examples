@@ -1,0 +1,18 @@
+#! /usr/bin/bash
+
+if [[ $# -lt 1 ]]; then
+    echo "Argument for bucket name is missing"
+    exit 1
+elif [[ !($1 =~ ^[a-z0-9]+[a-z0-9-]*$) ]]; then
+    echo "bucket name is invalid"
+    exit 1
+else
+    #https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html
+    aws s3api create-bucket \
+    --bucket $1 \
+    --region us-east-1 \
+    --output text
+    exit 0
+fi
+
+

@@ -1,0 +1,14 @@
+#!/usr/bin/bash
+if [[ "$#" -lt 1 ]]; then
+    echo "Argument for stack name is missing"
+    exit 1
+elif [[ !($1 =~ ^[a-z0-9]+[a-z0-9-]*$) ]]; then
+    echo "Invalid stack name"
+    exit 1
+else
+    SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
+    aws cloudformation deploy \
+        --template-file ${SCRIPT_DIR}/template.yaml \
+        --stack-name $1 \
+        --region us-east-1
+fi

@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+if [[ $# -lt 1 ]]; then
+    echo "Argument for stack name is missing"
+    exit 1
+fi
+
+aws cloudformation delete-stack \
+    --stack-name $1

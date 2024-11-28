@@ -1,0 +1,68 @@
+Description: "Template for creating a role to be assumed by a machine user"
+#input parameters
+Parameters:
+  user:
+    Type: String
+    Default: sts-machine-user
+  bucketName:
+    Type: String
+    Default: sts-bucket-34903490
+  roleName:
+    Type: String
+    Default: sts-role
+Resources:
+ # s3 bucket
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref bucketName
+  
+    # IAM user with no permissions
+  MachineUser:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: !Ref user
+      Policies:
+        - PolicyName: userRolePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 'sts:AssumeRole'
+                Resource: 
+                  - !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${roleName}"
+  #sts role
+  s3Role:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              AWS: !GetAtt MachineUser.Arn
+      MaxSessionDuration: 10800
+      Path: /
+      RoleName: !Ref roleName
+      Policies:
+        - PolicyName: s3Policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 's3:*'
+                Resource: 
+                  - !Sub "arn:${AWS::Partition}:s3:::*"
+                  - !Sub "arn:${AWS::Partition}:s3:::${bucketName}"
+                  - !Sub "arn:${AWS::Partition}:s3:::${bucketName}/*"
+Outputs:
+  BucketName: 
+    Value: !GetAtt MyS3Bucket.Arn
+    Description: "Arn of s3 bucket"
+  UserName: 
+    Value: !GetAtt MachineUser.Arn
+    Description: "Arn of the user"
+  RoleName: 
+    Value: !GetAtt s3Role.Arn
+    Description: "Arn of the sts role"

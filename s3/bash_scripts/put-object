@@ -1,0 +1,22 @@
+#!/usr/bin/bash
+set -e
+if [[ -z $1 ]]; then
+    echo "Enter argument for bucket name"
+    exit 1
+elif [[ !($1 =~ ^[a-z0-9]+[a-z0-9-]*$) ]]; then
+    echo "Invalid bucket name"
+    exit 1
+fi
+
+if [[ -z $2 ]]; then
+    echo "Enter agument for file to upload"
+    exit 1
+fi
+filename=$(realpath $2)
+basefile=$(basename $file)
+
+aws s3api put-object \
+    --bucket $1 \
+    --body $filename \
+    --key $basefile \
+    --output json

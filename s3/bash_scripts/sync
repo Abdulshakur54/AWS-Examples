@@ -1,0 +1,20 @@
+#!/usr/bin/bash
+
+set -e
+
+if [[ -z $1 ]]; then
+    echo "Enter agument for source directory"
+    exit 1
+fi
+
+if [[ -z $2 ]]; then
+    echo "Enter argument for bucket name"
+    exit 1
+elif [[ !($2 =~ ^[a-z0-9]+[a-z0-9-]*$) ]]; then
+    echo "Invalid bucket name"
+    exit 1
+fi
+
+absdir=$(realpath $1)
+s3buck=$2
+aws s3 sync $absdir s3://${s3buck}/files/ \
